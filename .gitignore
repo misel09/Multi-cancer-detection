@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.spec
+venv/
+env/
+.venv/
+.env
+
+# Node / Frontend
+node_modules/
+dist/
+.cache/
+*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Uploads & local ML models
+backend/uploads/
+ml/models/*.h5
+ml/models/*.keras
+
+# OS
+.DS_Store
+Thumbs.db
