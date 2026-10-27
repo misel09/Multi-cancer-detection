@@ -63,13 +63,13 @@ export default function PredictionResult() {
   };
 
   if (loading) return (
-    <Box sx={{ minHeight: '100vh', background: '#08080f', display: 'flex', alignItems: 'center', justifyContent: 'center', pt: 8 }}>
-      <CircularProgress sx={{ color: '#818cf8' }} />
+    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <CircularProgress sx={{ color: '#14b8a6' }} />
     </Box>
   );
 
   if (error) return (
-    <Box sx={{ minHeight: '100vh', background: '#08080f', pt: 10, px: 4 }}>
+    <Box sx={{ minHeight: '100vh', pt: 4, px: 4 }}>
       <Alert severity="error">{error}</Alert>
       <Button onClick={() => navigate('/history')} sx={{ mt: 2, color: '#818cf8' }}>← Back to History</Button>
     </Box>
@@ -86,7 +86,7 @@ export default function PredictionResult() {
   // Try to get gradcam from path URL served by FastAPI static mount
   // The gradcam_base64 isn't stored in DB — we re-read the saved PNG
   return (
-    <Box sx={{ minHeight: '100vh', background: '#08080f', pt: 10, pb: 6, px: { xs: 2, md: 4 } }}>
+    <Box sx={{ minHeight: '100vh', pt: 4, pb: 6, px: { xs: 2, md: 4 } }}>
       <Box sx={{ maxWidth: 1100, mx: 'auto' }}>
         {/* Header */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4, flexWrap: 'wrap' }}>

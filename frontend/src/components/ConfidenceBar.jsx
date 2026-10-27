@@ -1,26 +1,23 @@
 import { Box, Typography, LinearProgress } from '@mui/material';
 
-function getColor(confidence) {
-  if (confidence >= 0.85) return '#4ade80';
-  if (confidence >= 0.65) return '#facc15';
-  return '#f87171';
+function getColor(c) {
+  if (c >= 0.85) return '#22c55e';
+  if (c >= 0.65) return '#f59e0b';
+  return '#ef4444';
 }
 
 export default function ConfidenceBar({ confidence }) {
-  const pct = Math.round(confidence * 100);
+  const pct   = Math.round(confidence * 100);
   const color = getColor(confidence);
+  const label = confidence >= 0.85 ? 'High confidence' : confidence >= 0.65 ? 'Moderate confidence' : 'Low confidence';
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
+        <Typography variant="caption" sx={{ color: '#6b7094', fontWeight: 600 }}>
           Confidence Score
         </Typography>
-        <Typography
-          variant="h6"
-          fontWeight={800}
-          sx={{ color, lineHeight: 1 }}
-        >
+        <Typography variant="h6" fontWeight={800} sx={{ color, lineHeight: 1 }}>
           {pct}%
         </Typography>
       </Box>
@@ -28,18 +25,17 @@ export default function ConfidenceBar({ confidence }) {
         variant="determinate"
         value={pct}
         sx={{
-          height: 10,
-          borderRadius: 5,
-          background: 'rgba(255,255,255,0.08)',
+          height: 10, borderRadius: 5,
+          background: 'rgba(124,106,245,0.08)',
           '& .MuiLinearProgress-bar': {
             borderRadius: 5,
-            background: `linear-gradient(90deg, ${color}88, ${color})`,
+            background: `linear-gradient(90deg, ${color}aa, ${color})`,
             transition: 'width 1s ease',
           },
         }}
       />
-      <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.35)', mt: 0.5, display: 'block' }}>
-        {confidence >= 0.85 ? 'High confidence' : confidence >= 0.65 ? 'Moderate confidence' : 'Low confidence'}
+      <Typography variant="caption" sx={{ color: '#9b96c4', mt: 0.5, display: 'block' }}>
+        {label}
       </Typography>
     </Box>
   );

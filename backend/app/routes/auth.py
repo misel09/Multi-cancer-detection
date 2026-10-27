@@ -17,7 +17,7 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)):
             status_code=status.HTTP_409_CONFLICT,
             detail="Email already registered",
         )
-    user = create_user(db, payload.name, payload.email, payload.password)
+    user = create_user(db, payload.name, payload.email, payload.password, role=payload.role or "user")
     token = create_access_token({"sub": user.email})
     return TokenResponse(access_token=token)
 

@@ -14,4 +14,7 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[str] = mapped_column(String(20), default="user")  # "user" | "admin"
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    phone: Mapped[str] = mapped_column(String(30), nullable=True)
+    specialty: Mapped[str] = mapped_column(String(100), nullable=True)
+    avatar_color: Mapped[str] = mapped_column(String(20), default="#7c6af5")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

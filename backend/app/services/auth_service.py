@@ -46,16 +46,21 @@ def get_user_by_email(db: Session, email: str) -> User | None:
     return db.query(User).filter(User.email == email).first()
 
 
-def create_user(db: Session, name: str, email: str, password: str) -> User:
+def create_user(db: Session, name: str, email: str, password: str, role: str = "user") -> User:
+    # First user ever becomes admin automatically regardless of chosen role
+    user_count = db.query(User).count()
+    effective_role = "admin" if user_count == 0 else role
     user = User(
         name=name,
         email=email,
         password_hash=hash_password(password),
+        role=effective_role,
     )
     db.add(user)
     db.commit()
     db.refresh(user)
     return user
+
 
 
 def authenticate_user(db: Session, email: str, password: str) -> User | None:

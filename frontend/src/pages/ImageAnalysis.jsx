@@ -42,39 +42,37 @@ export default function ImageAnalysis() {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', background: '#08080f', pt: 10, pb: 6, px: { xs: 2, md: 4 } }}>
+    <Box sx={{ pt: 4, pb: 6, px: { xs: 2, md: 4 } }}>
       <Box sx={{ maxWidth: 700, mx: 'auto' }}>
-        <Typography variant="h4" fontWeight={800} sx={{
-          background: 'linear-gradient(90deg, #fff, rgba(255,255,255,0.7))',
-          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1,
-        }}>
+
+        {/* ── Header ── */}
+        <Typography variant="h4" sx={{ color: '#1e1b3a', mb: 1 }}>
           Image Analysis
         </Typography>
-        <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.4)', mb: 4 }}>
+        <Typography variant="body1" sx={{ color: '#9b96c4', mb: 4 }}>
           Upload a medical image to receive an AI-powered cancer classification with Grad-CAM visualization.
         </Typography>
 
         {error && (
-          <Alert severity="error" sx={{ mb: 3, background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }}>
-            {error}
-          </Alert>
+          <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>{error}</Alert>
         )}
 
-        {/* Drop Zone */}
+        {/* ── Drop Zone ── */}
         <Paper
           {...getRootProps()}
           elevation={0}
           sx={{
             p: 6,
             borderRadius: 4,
-            border: `2px dashed ${isDragActive ? '#818cf8' : 'rgba(99,102,241,0.3)'}`,
-            background: isDragActive ? 'rgba(99,102,241,0.08)' : 'rgba(15,15,45,0.6)',
+            border: `2px dashed ${isDragActive ? '#7c6af5' : 'rgba(124,106,245,0.3)'}`,
+            background: isDragActive ? 'rgba(124,106,245,0.04)' : '#faf9ff',
             cursor: 'pointer',
             textAlign: 'center',
             transition: 'all 0.2s',
+            boxShadow: isDragActive ? '0 0 0 4px rgba(124,106,245,0.1)' : 'none',
             '&:hover': {
-              border: '2px dashed #818cf8',
-              background: 'rgba(99,102,241,0.05)',
+              border: '2px dashed #7c6af5',
+              background: 'rgba(124,106,245,0.03)',
             },
           }}
         >
@@ -84,29 +82,40 @@ export default function ImageAnalysis() {
               <img
                 src={preview}
                 alt="Preview"
-                style={{ maxHeight: 260, maxWidth: '100%', borderRadius: 12, marginBottom: 16 }}
+                style={{
+                  maxHeight: 260, maxWidth: '100%',
+                  borderRadius: 12, marginBottom: 16,
+                  boxShadow: '0 8px 30px rgba(124,106,245,0.15)',
+                }}
               />
-              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.5)' }}>
+              <Typography variant="body2" sx={{ color: '#9b96c4' }}>
                 {file?.name} ({(file?.size / 1024).toFixed(1)} KB)
               </Typography>
-              <Typography variant="caption" sx={{ color: '#818cf8' }}>
+              <Typography variant="caption" sx={{ color: '#7c6af5', fontWeight: 600 }}>
                 Click or drag to replace
               </Typography>
             </Box>
           ) : (
             <Box>
-              <CloudUploadRounded sx={{ fontSize: 56, color: '#818cf8', opacity: 0.7, mb: 2 }} />
-              <Typography variant="h6" fontWeight={600} sx={{ color: 'white', mb: 1 }}>
+              <Box sx={{
+                width: 80, height: 80, borderRadius: 3,
+                background: 'linear-gradient(135deg, rgba(124,106,245,0.15), rgba(167,139,250,0.1))',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                mx: 'auto', mb: 2,
+              }}>
+                <CloudUploadRounded sx={{ fontSize: 40, color: '#7c6af5' }} />
+              </Box>
+              <Typography variant="h6" fontWeight={700} sx={{ color: '#1e1b3a', mb: 1 }}>
                 {isDragActive ? 'Drop it here!' : 'Drag & drop an image'}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.4)' }}>
+              <Typography variant="body2" sx={{ color: '#9b96c4' }}>
                 or click to browse · JPEG, PNG, WEBP · max 10 MB
               </Typography>
             </Box>
           )}
         </Paper>
 
-        {/* Controls */}
+        {/* ── Controls ── */}
         <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
           <Button
             id="analyze-btn"
@@ -116,15 +125,14 @@ export default function ImageAnalysis() {
             onClick={handleAnalyze}
             startIcon={success ? <CheckCircleRounded /> : loading ? null : <ImageRounded />}
             sx={{
-              flex: 1,
-              py: 1.5,
+              flex: 1, py: 1.5,
               background: success
-                ? 'linear-gradient(135deg, #16a34a, #4ade80)'
-                : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-              fontWeight: 700,
-              fontSize: 15,
-              borderRadius: 2,
-              textTransform: 'none',
+                ? 'linear-gradient(135deg, #22c55e, #16a34a)'
+                : 'linear-gradient(135deg, #7c6af5, #a78bfa)',
+              fontWeight: 700, fontSize: 15, borderRadius: 2,
+              boxShadow: success
+                ? '0 4px 14px rgba(34,197,94,0.35)'
+                : '0 4px 14px rgba(124,106,245,0.35)',
             }}
           >
             {success ? 'Done! Redirecting…' : loading ? (
@@ -142,10 +150,10 @@ export default function ImageAnalysis() {
               onClick={() => { setFile(null); setPreview(null); setSuccess(false); }}
               sx={{
                 py: 1.5,
-                borderColor: 'rgba(255,255,255,0.2)',
-                color: 'rgba(255,255,255,0.6)',
+                borderColor: 'rgba(124,106,245,0.3)',
+                color: '#7c6af5',
                 borderRadius: 2,
-                textTransform: 'none',
+                '&:hover': { background: 'rgba(124,106,245,0.06)', borderColor: '#7c6af5' },
               }}
             >
               Clear
@@ -153,23 +161,37 @@ export default function ImageAnalysis() {
           )}
         </Box>
 
-        {loading && <LinearProgress sx={{ mt: 2, borderRadius: 5, background: 'rgba(99,102,241,0.1)', '& .MuiLinearProgress-bar': { background: 'linear-gradient(90deg, #6366f1, #8b5cf6)' } }} />}
+        {loading && (
+          <LinearProgress sx={{
+            mt: 2, borderRadius: 5,
+            background: 'rgba(124,106,245,0.1)',
+            '& .MuiLinearProgress-bar': {
+              background: 'linear-gradient(90deg, #7c6af5, #a78bfa)',
+            },
+          }} />
+        )}
 
-        {/* Tips */}
-        <Paper elevation={0} sx={{ mt: 4, p: 3, borderRadius: 3, background: 'rgba(15,15,45,0.6)', border: '1px solid rgba(99,102,241,0.1)' }}>
-          <Typography variant="subtitle2" fontWeight={700} sx={{ color: '#818cf8', mb: 1.5 }}>
-            Tips for best results
+        {/* ── Tips ── */}
+        <Paper elevation={0} sx={{
+          mt: 4, p: 3, borderRadius: 3,
+          background: '#f8f7ff',
+          border: '1px solid rgba(124,106,245,0.15)',
+          boxShadow: 'none',
+        }}>
+          <Typography variant="subtitle2" sx={{ color: '#7c6af5', mb: 1.5 }}>
+            💡 Tips for best results
           </Typography>
           {[
             'Use high-resolution images (min 224×224 px)',
             'Ensure the image is clearly focused on the tissue/region of interest',
             'Supported: histopathology slides, MRI, CT, dermoscopy',
           ].map((tip) => (
-            <Typography key={tip} variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block', mb: 0.5 }}>
+            <Typography key={tip} variant="caption" sx={{ color: '#9b96c4', display: 'block', mb: 0.5 }}>
               ✦ {tip}
             </Typography>
           ))}
         </Paper>
+
       </Box>
     </Box>
   );

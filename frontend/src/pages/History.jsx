@@ -11,6 +11,12 @@ import { usePredictions } from '../hooks/usePredictions';
 import CancerGroupBadge from '../components/CancerGroupBadge';
 import ConfidenceBar from '../components/ConfidenceBar';
 
+const STATUS_CFG = {
+  VERIFIED: { color: '#22c55e', bg: 'rgba(34,197,94,0.1)',  border: 'rgba(34,197,94,0.25)'  },
+  REJECTED: { color: '#ef4444', bg: 'rgba(239,68,68,0.1)',  border: 'rgba(239,68,68,0.25)'  },
+  PENDING:  { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.25)' },
+};
+
 export default function History() {
   const { predictions, loading, error, fetchAll, remove } = usePredictions();
   const navigate = useNavigate();
@@ -25,16 +31,13 @@ export default function History() {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', background: '#08080f', pt: 10, pb: 6, px: { xs: 2, md: 4 } }}>
+    <Box sx={{ pt: 4, pb: 6, px: { xs: 2, md: 4 } }}>
+
+      {/* ── Header ── */}
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 4, gap: 2, flexWrap: 'wrap' }}>
         <Box sx={{ flex: 1 }}>
-          <Typography variant="h4" fontWeight={800} sx={{
-            background: 'linear-gradient(90deg, #fff, rgba(255,255,255,0.7))',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-          }}>
-            Prediction History
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.4)', mt: 0.5 }}>
+          <Typography variant="h4" sx={{ color: '#1e1b3a' }}>Prediction History</Typography>
+          <Typography variant="body2" sx={{ color: '#9b96c4', mt: 0.5 }}>
             All your past analyses — click any row to view the full result.
           </Typography>
         </Box>
@@ -42,12 +45,7 @@ export default function History() {
           variant="contained"
           startIcon={<CloudUploadRounded />}
           onClick={() => navigate('/analyze')}
-          sx={{
-            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-            textTransform: 'none',
-            fontWeight: 700,
-            borderRadius: 2,
-          }}
+          sx={{ borderRadius: 2, px: 3 }}
         >
           Analyze New
         </Button>
@@ -57,23 +55,46 @@ export default function History() {
 
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
-          <CircularProgress sx={{ color: '#818cf8' }} />
+          <CircularProgress sx={{ color: '#7c6af5' }} />
         </Box>
       ) : predictions.length === 0 ? (
-        <Paper elevation={0} sx={{ p: 8, textAlign: 'center', borderRadius: 3, background: 'rgba(15,15,45,0.8)', border: '1px dashed rgba(99,102,241,0.2)' }}>
-          <CloudUploadRounded sx={{ fontSize: 56, color: '#818cf8', opacity: 0.4, mb: 2 }} />
-          <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.5)' }}>No predictions yet</Typography>
-          <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.3)', mb: 3 }}>Upload your first image to get started.</Typography>
-          <Button variant="contained" onClick={() => navigate('/analyze')}
-            sx={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', textTransform: 'none', borderRadius: 2 }}>
+        <Paper elevation={1} sx={{
+          p: 8, textAlign: 'center', borderRadius: 3,
+          background: '#ffffff',
+          border: '1px dashed rgba(124,106,245,0.25)',
+          boxShadow: '0 4px 20px rgba(124,106,245,0.07)',
+        }}>
+          <CloudUploadRounded sx={{ fontSize: 56, color: 'rgba(124,106,245,0.25)', mb: 2 }} />
+          <Typography variant="h6" sx={{ color: '#6b7094' }}>No predictions yet</Typography>
+          <Typography variant="body2" sx={{ color: '#9b96c4', mb: 3 }}>
+            Upload your first image to get started.
+          </Typography>
+          <Button variant="contained" onClick={() => navigate('/analyze')} sx={{ borderRadius: 2 }}>
             Analyze Now
           </Button>
         </Paper>
       ) : (
-        <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 3, background: 'rgba(15,15,45,0.9)', border: '1px solid rgba(99,102,241,0.15)' }}>
+        <TableContainer
+          component={Paper}
+          elevation={1}
+          sx={{
+            borderRadius: 3,
+            background: '#ffffff',
+            border: '1px solid rgba(124,106,245,0.1)',
+            boxShadow: '0 4px 20px rgba(124,106,245,0.07)',
+          }}
+        >
           <Table>
             <TableHead>
-              <TableRow sx={{ '& th': { color: 'rgba(255,255,255,0.4)', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 1, borderBottom: '1px solid rgba(255,255,255,0.08)' } }}>
+              <TableRow sx={{
+                background: '#f8f7ff',
+                '& th': {
+                  color: '#9b96c4', fontWeight: 700, fontSize: 11,
+                  textTransform: 'uppercase', letterSpacing: 1,
+                  borderBottom: '1px solid rgba(124,106,245,0.1)',
+                  py: 2,
+                },
+              }}>
                 <TableCell>#</TableCell>
                 <TableCell>Cancer Group</TableCell>
                 <TableCell>Subtype</TableCell>
@@ -84,61 +105,67 @@ export default function History() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {predictions.map((p) => (
-                <TableRow
-                  key={p.id}
-                  hover
-                  sx={{
-                    cursor: 'pointer',
-                    '& td': { borderBottom: '1px solid rgba(255,255,255,0.05)', color: 'white' },
-                    '&:hover': { background: 'rgba(99,102,241,0.05)' },
-                  }}
-                  onClick={() => navigate(`/result/${p.id}`)}
-                >
-                  <TableCell sx={{ color: 'rgba(255,255,255,0.3) !important', fontSize: 12 }}>#{p.id}</TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <CancerGroupBadge group={p.cancer_group} />
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>{p.cancer_subtype}</TableCell>
-                  <TableCell>
-                    <Box sx={{ width: 120 }}>
-                      <ConfidenceBar confidence={p.confidence} />
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={p.status}
-                      size="small"
-                      sx={{
-                        fontSize: 10, fontWeight: 700, letterSpacing: 0.5,
-                        ...(p.status === 'VERIFIED' && { color: '#4ade80', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.2)' }),
-                        ...(p.status === 'REJECTED' && { color: '#f87171', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.2)' }),
-                        ...(p.status === 'PENDING' && { color: '#fbbf24', background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.2)' }),
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell sx={{ fontSize: 12, color: 'rgba(255,255,255,0.5) !important' }}>
-                    {new Date(p.created_at).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <Tooltip title="View result">
-                      <IconButton size="small" onClick={() => navigate(`/result/${p.id}`)} sx={{ color: '#818cf8' }}>
-                        <VisibilityRounded fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Delete">
-                      <IconButton
+              {predictions.map((p) => {
+                const s = STATUS_CFG[p.status] || STATUS_CFG.PENDING;
+                return (
+                  <TableRow
+                    key={p.id}
+                    hover
+                    sx={{
+                      cursor: 'pointer',
+                      '& td': { color: '#1e1b3a', py: 1.5 },
+                      '&:hover': { background: 'rgba(124,106,245,0.04)' },
+                      '&:last-child td': { borderBottom: 0 },
+                    }}
+                    onClick={() => navigate(`/result/${p.id}`)}
+                  >
+                    <TableCell sx={{ color: '#9b96c4 !important', fontSize: 12 }}>#{p.id}</TableCell>
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                      <CancerGroupBadge group={p.cancer_group} />
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>{p.cancer_subtype}</TableCell>
+                    <TableCell>
+                      <Box sx={{ width: 130 }}>
+                        <ConfidenceBar confidence={p.confidence} />
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={p.status || 'PENDING'}
                         size="small"
-                        onClick={() => handleDelete(p.id)}
-                        disabled={deleting === p.id}
-                        sx={{ color: '#f87171', '&:hover': { background: 'rgba(239,68,68,0.1)' } }}
-                      >
-                        {deleting === p.id ? <CircularProgress size={14} /> : <DeleteRounded fontSize="small" />}
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))}
+                        sx={{
+                          fontSize: 10, fontWeight: 700,
+                          color: s.color, background: s.bg,
+                          border: `1px solid ${s.border}`,
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell sx={{ fontSize: 12, color: '#9b96c4 !important' }}>
+                      {new Date(p.created_at).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                      <Tooltip title="View result">
+                        <IconButton size="small" onClick={() => navigate(`/result/${p.id}`)}
+                          sx={{ color: '#7c6af5', '&:hover': { background: 'rgba(124,106,245,0.1)' } }}>
+                          <VisibilityRounded fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <IconButton
+                          size="small"
+                          onClick={() => handleDelete(p.id)}
+                          disabled={deleting === p.id}
+                          sx={{ color: '#ef4444', '&:hover': { background: 'rgba(239,68,68,0.08)' } }}
+                        >
+                          {deleting === p.id
+                            ? <CircularProgress size={14} sx={{ color: '#ef4444' }} />
+                            : <DeleteRounded fontSize="small" />}
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>

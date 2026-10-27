@@ -26,6 +26,23 @@ def get_db():
         db.close()
 
 
+def migrate_db() -> None:
+    """Add new columns to existing tables if they don't already exist (lightweight migration)."""
+    from sqlalchemy import text, inspect
+    inspector = inspect(engine)
+    with engine.connect() as conn:
+        existing_cols = {col["name"] for col in inspector.get_columns("users")} if "users" in inspector.get_table_names() else set()
+        new_cols = {
+            "phone":        "ALTER TABLE users ADD COLUMN phone VARCHAR(30)",
+            "specialty":    "ALTER TABLE users ADD COLUMN specialty VARCHAR(100)",
+            "avatar_color": "ALTER TABLE users ADD COLUMN avatar_color VARCHAR(20) DEFAULT '#7c6af5'",
+        }
+        for col_name, ddl in new_cols.items():
+            if col_name not in existing_cols:
+                conn.execute(text(ddl))
+        conn.commit()
+
+
 def init_db() -> None:
     """Create all tables. Called on FastAPI startup."""
     # Import models so SQLAlchemy registers them on Base.metadata
@@ -33,4 +50,6 @@ def init_db() -> None:
     import app.models.prediction  # noqa: F401
     import app.models.model_version  # noqa: F401
 
+    migrate_db()
     Base.metadata.create_all(bind=engine)
+
