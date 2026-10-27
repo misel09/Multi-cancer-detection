@@ -14,6 +14,7 @@ import Analytics from './pages/Analytics';
 import AdminDashboard from './pages/AdminDashboard';
 import ProfileSettings from './pages/ProfileSettings';
 import Notifications from './pages/Notifications';
+import Chatboard from './pages/Chatboard';
 
 // ── Light Violet / Lavender theme (matches reference UI) ─────────────────────
 const theme = createTheme({
@@ -142,6 +143,7 @@ function AppRoutes() {
       <Route path="/analytics"     element={<ProtectedLayout><Analytics /></ProtectedLayout>} />
       <Route path="/profile"       element={<ProtectedLayout><ProfileSettings /></ProtectedLayout>} />
       <Route path="/notifications" element={<ProtectedLayout><Notifications /></ProtectedLayout>} />
+      <Route path="/chat"          element={<ProtectedLayout><Chatboard /></ProtectedLayout>} />
       <Route path="/admin"         element={<ProtectedLayout><AdminRoute><AdminDashboard /></AdminRoute></ProtectedLayout>} />
       <Route path="*"              element={<Navigate to="/login" replace />} />
     </Routes>

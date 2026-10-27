@@ -11,7 +11,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config.settings import settings
 from app.db.database import init_db
-from app.routes import auth, dashboard, model, predictions, admin, profile
+from app.routes import auth, dashboard, model, predictions, admin, profile, chat
 
 
 @asynccontextmanager
@@ -51,6 +51,7 @@ app.include_router(dashboard.router)
 app.include_router(model.router)
 app.include_router(admin.router)
 app.include_router(profile.router)
+app.include_router(chat.router)
 
 # ── Static file serving for uploads ──────────────────────────────────────────
 if os.path.exists(settings.UPLOAD_DIR):

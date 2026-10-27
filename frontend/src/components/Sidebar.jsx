@@ -5,6 +5,7 @@ import {
   CloudUploadRounded, LogoutRounded, ChevronLeftRounded,
   ChevronRightRounded, ScienceRounded, AdminPanelSettingsRounded,
   PersonRounded, NotificationsRounded,
+  SmartToyRounded,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
@@ -55,6 +56,7 @@ export default function Sidebar() {
         </Badge>
       )
     },
+    { label: 'Chatboard', path: '/chat', icon: <SmartToyRounded /> },
     { label: 'Profile',   path: '/profile',        icon: <PersonRounded /> },
     ...(user.role === 'admin'
       ? [{ label: 'Admin', path: '/admin', icon: <AdminPanelSettingsRounded /> }]

@@ -18,6 +18,11 @@ class Settings(BaseSettings):
     APP_NAME: str = "Multi-Cancer Detection API"
     DEBUG: bool = True
 
+    # Educational assistant
+    LLM_API_KEY: str = ""
+    LLM_PROVIDER: str = "auto"
+    LLM_MODEL: str = "gemini-flash-lite-latest"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
