@@ -1,22 +1,10 @@
-"""
-ModelService — the ONLY file that changes when the real EfficientNetB3 model is ready.
-
-Current behaviour (sample / demo mode):
-  - Uses a deterministic hash of the image bytes to pick a cancer class,
-    so the same image always returns the same prediction.
-  - Generates a REAL Grad-CAM heatmap via MobileNetV2 (just for visual demo).
-  - Returns a realistic confidence score.
-
-When your real model is ready:
-  1. Place the `.keras` / `.h5` in  ml/models/
-  2. Replace _predict_class() with actual model inference.
-  3. No other files need changing.
-"""
-
-import hashlib
-import random
-import sys
 import os
+import io
+import sys
+
+import numpy as np
+import tensorflow as tf
+from PIL import Image
 
 # Allow importing ml.classes from this sub-package
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -39,32 +27,45 @@ class ModelService:
     """
 
     def __init__(self) -> None:
-        # Warm up Grad-CAM model on first instantiation
-        # (lazy-loaded inside gradcam.py via singleton)
-        pass
+        self._model: tf.keras.Model | None = None
+        self._model_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..", "..", "model", "multi_cancer_classifier_final.h5",
+            )
+        )
+
+    def _get_model(self) -> tf.keras.Model:
+        if self._model is None:
+            if not os.path.isfile(self._model_path):
+                raise FileNotFoundError(f"Cancer model not found: {self._model_path}")
+            self._model = tf.keras.models.load_model(self._model_path, compile=False)
+        return self._model
 
     # ------------------------------------------------------------------
-    # Sample prediction logic  (replace this section with real inference)
+    # Trained model inference
     # ------------------------------------------------------------------
 
     @staticmethod
-    def _predict_class(image_bytes: bytes) -> tuple[str, str, float]:
-        """
-        Deterministic fake prediction based on image hash.
-        Same image → same prediction every time.
-        """
-        digest = hashlib.sha256(image_bytes).hexdigest()
-        seed = int(digest[:8], 16)
-        rng = random.Random(seed)
+    def _prepare_image(image_bytes: bytes) -> np.ndarray:
+        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        image = image.resize((224, 224), Image.Resampling.LANCZOS)
+        image_array = np.expand_dims(np.asarray(image, dtype=np.float32), axis=0)
+        return tf.keras.applications.efficientnet.preprocess_input(image_array)
 
-        # Pick class
-        index = rng.randint(0, len(ALL_CLASSES) - 1)
+    def _predict_class(self, image_bytes: bytes) -> tuple[str, str, float]:
+        image_array = self._prepare_image(image_bytes)
+        predictions = np.asarray(self._get_model().predict(image_array, verbose=0))[0]
+        if predictions.shape[0] != len(ALL_CLASSES):
+            raise ValueError(
+                f"Model configuration mismatch: the H5 model returns {predictions.shape[0]} classes, "
+                f"but the configured training mapping has {len(ALL_CLASSES)} labels."
+            )
+
+        index = int(np.argmax(predictions))
         cancer_group, cancer_subtype = get_class_by_index(index)
-
-        # Realistic confidence: 55% – 97%
-        confidence = round(rng.uniform(0.55, 0.97), 4)
-
-        return cancer_group, cancer_subtype, confidence
+        confidence = float(predictions[index])
+        return cancer_group, cancer_subtype, round(confidence, 4)
 
     # ------------------------------------------------------------------
     # Public API

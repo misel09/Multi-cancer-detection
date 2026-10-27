@@ -21,12 +21,18 @@ async def upload_and_analyze(
     validate_image(file)
     image_bytes = await file.read()
 
-    prediction = prediction_service.create_prediction(
-        db=db,
-        user_id=current_user.id,
-        image_bytes=image_bytes,
-        filename=file.filename or "upload.jpg",
-    )
+    try:
+        prediction = prediction_service.create_prediction(
+            db=db,
+            user_id=current_user.id,
+            image_bytes=image_bytes,
+            filename=file.filename or "upload.jpg",
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=str(exc),
+        ) from exc
     return prediction
 
 

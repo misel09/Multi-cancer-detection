@@ -23,7 +23,7 @@ def create_prediction(
     """
     Full pipeline:
       1. Save image to local uploads/ folder
-      2. Run ML inference (fake class + real Grad-CAM)
+    2. Run trained ML inference and Grad-CAM
       3. Save Grad-CAM overlay image
       4. Persist Prediction row to DB
       5. Return the ORM object
@@ -52,7 +52,7 @@ def create_prediction(
         cancer_subtype=result["cancer_subtype"],
         confidence=result["confidence"],
         gradcam_path=gradcam_path,
-        model_version="sample-v1",
+        model_version="multi-cancer-classifier-h5",
     )
     db.add(prediction)
     db.commit()
